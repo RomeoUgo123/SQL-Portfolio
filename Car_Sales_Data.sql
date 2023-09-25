@@ -45,7 +45,7 @@ ORDER BY 3 DESC
 
 
 ---Recency=LastOrderDate, Frequency=CountOfTotalOrder, Monetary=TotalSpend
-
+--- Who is the best customer.
 DROP TABLE IF EXISTS #rfm
 ;with rfm as
 (
@@ -76,10 +76,11 @@ from rfm_calc c
 
 select CUSTOMERNAME, rfm_recency, rfm_frequency, rfm_monetary   
 	CASE
-		when rfm_cell_string in (111, 112, 121, 122, 123, 132, 211, 212, 114, 141) then 'lost_customers'v -- These are the lost customers.
-		when rfm_cell_string in () then 'lost_customers'
-		when rfm_cell_string in () then 'lost_customers'
-		when rfm_cell_string in () then 'lost_customers'
-		when rfm_cell_string in () then 'lost_customers'
-		when rfm_cell_string in () then 'lost_customers'
+		when rfm_cell_string in (111, 112, 121, 122, 123, 132, 211, 212, 114, 141) then 'lost customers' -- These are the lost customers.
+		when rfm_cell_string in (133, 134, 143, 244, 334, 343, 344) then 'customers are slipping'
+		when rfm_cell_string in (311, 411, 331) then 'new customers'
+		when rfm_cell_string in (222, 223, 233, 322) then 'potention to be active'
+		when rfm_cell_string in (323, 333, 321, 422, 332, 432) then 'active customers'
+		when rfm_cell_string in (433, 434, 443, 444) then 'loyal customers'
+	END rfm_segment
 from #rfm
