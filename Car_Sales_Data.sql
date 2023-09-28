@@ -85,3 +85,29 @@ select CUSTOMERNAME, rfm_recency, rfm_frequency, rfm_monetary,
 	END rfm_segment
 from #rfm
 
+---What products are mostly sold together?
+-- select * from [dbo].[sales_port_data] where ORDERNUMBER = 10148--(Amount Shipped)
+
+select DISTINCT OrderNumber, STUFF(
+
+	(select ',  ' + PRODUCTCODE
+	from [dbo].[sales_port_data] o
+	where ORDERNUMBER in
+		(
+			select ORDERNUMBER
+			from (
+				select ORDERNUMBER, COUNT(*) AmountShipped
+				from [dbo].[sales_port_data]
+				where STATUS = 'Shipped' --- Counting all the orders that are shipped. Either processing or on hold.
+				Group By ORDERNUMBER
+			)q
+			where AmountShipped = 3
+		)
+		and o.ORDERNUMBER = s.ORDERNUMBER
+		for xml path ('')), 1, 1, '') ProductCodes
+
+from [dbo].[sales_port_data] s
+ORDER BY 2 desc --- Can see what products are usually sold together.
+
+
+
